@@ -3,8 +3,6 @@ package br.org.edu.ifrn.LojaCarro.services;
 import br.org.edu.ifrn.LojaCarro.CarroException;
 import br.org.edu.ifrn.LojaCarro.model.Carro;
 import br.org.edu.ifrn.LojaCarro.repository.CarroRepository;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -14,8 +12,6 @@ import java.util.Optional;
 
 @Service
 public class CarroService {
-
-    private static final Logger logger = LoggerFactory.getLogger(CarroService.class);
 
     @Autowired
     public CarroRepository carroRepository;
@@ -32,11 +28,12 @@ public class CarroService {
 
         logService.info(
                 "CADASTRO",
-                carroSalvo.getModelo(),
+                "CARRO",
                 carroSalvo.getId(),
-                "ANO: " + carroSalvo.getAno()
+                "SUCESSO",
+                "MODELO: " + carroSalvo.getModelo()
+                        + " | ANO: " + carroSalvo.getAno()
                         + " | PRECO: " + carroSalvo.getPreco()
-                        + " | RESULTADO: SUCESSO"
         );
 
         return carroSalvo;
@@ -50,7 +47,8 @@ public class CarroService {
                     "EXCLUSAO",
                     "CARRO",
                     id,
-                    "RESULTADO: ID INVALIDO"
+                    "ERRO",
+                    "ID INVALIDO"
             );
 
             throw new CarroException(
@@ -66,10 +64,10 @@ public class CarroService {
                     "EXCLUSAO",
                     "CARRO",
                     id,
-                    "RESULTADO: CARRO NAO ENCONTRADO"
+                    "ERRO",
+                    "CARRO NAO ENCONTRADO"
             );
 
-            carroRepository.deleteById(id);
             return;
         }
 
@@ -79,11 +77,12 @@ public class CarroService {
 
         logService.info(
                 "EXCLUSAO",
-                carroExcluido.getModelo(),
+                "CARRO",
                 carroExcluido.getId(),
-                "ANO: " + carroExcluido.getAno()
+                "SUCESSO",
+                "MODELO: " + carroExcluido.getModelo()
+                        + " | ANO: " + carroExcluido.getAno()
                         + " | PRECO: " + carroExcluido.getPreco()
-                        + " | RESULTADO: SUCESSO"
         );
     }
 
@@ -95,7 +94,8 @@ public class CarroService {
                     "CONSULTA",
                     "CARRO",
                     id,
-                    "RESULTADO: ID INVALIDO"
+                    "ERRO",
+                    "ID INVALIDO"
             );
 
             throw new CarroException(
@@ -111,18 +111,20 @@ public class CarroService {
                     "CONSULTA",
                     "CARRO",
                     id,
-                    "RESULTADO: CARRO NAO ENCONTRADO"
+                    "ERRO",
+                    "CARRO NAO ENCONTRADO"
             );
 
         } else {
 
             logService.info(
                     "CONSULTA",
-                    carro.get().getModelo(),
+                    "CARRO",
                     carro.get().getId(),
-                    "ANO: " + carro.get().getAno()
+                    "SUCESSO",
+                    "MODELO: " + carro.get().getModelo()
+                            + " | ANO: " + carro.get().getAno()
                             + " | PRECO: " + carro.get().getPreco()
-                            + " | RESULTADO: SUCESSO"
             );
         }
 
@@ -137,8 +139,8 @@ public class CarroService {
                 "LISTAGEM",
                 "CARROS",
                 null,
+                "SUCESSO",
                 "QUANTIDADE: " + carros.size()
-                        + " | RESULTADO: SUCESSO"
         );
 
         return carros;
@@ -148,26 +150,29 @@ public class CarroService {
 
         validarModelo(modelo);
 
-        Optional<Carro> carro = carroRepository.findFirstByModelo(modelo);
+        Optional<Carro> carro =
+                carroRepository.findFirstByModelo(modelo);
 
         if (carro.isEmpty()) {
 
             logService.warn(
                     "CONSULTA",
-                    modelo,
+                    "CARRO",
                     null,
-                    "RESULTADO: CARRO NAO ENCONTRADO"
+                    "ERRO",
+                    "CARRO NAO ENCONTRADO | MODELO: " + modelo
             );
 
         } else {
 
             logService.info(
                     "CONSULTA",
-                    carro.get().getModelo(),
+                    "CARRO",
                     carro.get().getId(),
-                    "ANO: " + carro.get().getAno()
+                    "SUCESSO",
+                    "MODELO: " + carro.get().getModelo()
+                            + " | ANO: " + carro.get().getAno()
                             + " | PRECO: " + carro.get().getPreco()
-                            + " | RESULTADO: SUCESSO"
             );
         }
 
@@ -199,12 +204,13 @@ public class CarroService {
 
         logService.info(
                 "ATUALIZACAO",
-                carroAtualizado.getModelo(),
+                "CARRO",
                 carroAtualizado.getId(),
-                "PRECO ANTERIOR: " + precoAnterior
+                "SUCESSO",
+                "MODELO: " + carroAtualizado.getModelo()
+                        + " | PRECO ANTERIOR: " + precoAnterior
                         + " | PRECO NOVO: " + carroAtualizado.getPreco()
                         + " | ANO: " + carroAtualizado.getAno()
-                        + " | RESULTADO: SUCESSO"
         );
 
         return carroAtualizado;
@@ -218,11 +224,12 @@ public class CarroService {
 
         logService.info(
                 "EXCLUSAO",
-                carro.getModelo(),
+                "CARRO",
                 carro.getId(),
-                "ANO: " + carro.getAno()
+                "SUCESSO",
+                "MODELO: " + carro.getModelo()
+                        + " | ANO: " + carro.getAno()
                         + " | PRECO: " + carro.getPreco()
-                        + " | RESULTADO: SUCESSO"
         );
 
         return carro;
@@ -234,9 +241,10 @@ public class CarroService {
 
             logService.error(
                     "ATUALIZACAO",
-                    c.getModelo(),
+                    "CARRO",
                     null,
-                    "RESULTADO: ID NAO INFORMADO"
+                    "ERRO",
+                    "ID NAO INFORMADO"
             );
 
             throw new CarroException(
@@ -248,9 +256,10 @@ public class CarroService {
 
             logService.warn(
                     "ATUALIZACAO",
-                    c.getModelo(),
+                    "CARRO",
                     c.getId(),
-                    "RESULTADO: CARRO NAO ENCONTRADO"
+                    "ERRO",
+                    "CARRO NAO ENCONTRADO"
             );
 
             throw new CarroException(
@@ -262,7 +271,8 @@ public class CarroService {
         validarModelo(c.getModelo());
         validarPreco(c.getPreco());
 
-        Optional<Carro> carroAnterior = carroRepository.findById(c.getId());
+        Optional<Carro> carroAnterior =
+                carroRepository.findById(c.getId());
 
         String modeloAnterior = carroAnterior
                 .map(Carro::getModelo)
@@ -276,14 +286,14 @@ public class CarroService {
 
         logService.info(
                 "ATUALIZACAO",
-                carroAtualizado.getModelo(),
+                "CARRO",
                 carroAtualizado.getId(),
+                "SUCESSO",
                 "MODELO ANTERIOR: " + modeloAnterior
                         + " | MODELO NOVO: " + carroAtualizado.getModelo()
                         + " | PRECO ANTERIOR: " + precoAnterior
                         + " | PRECO NOVO: " + carroAtualizado.getPreco()
                         + " | ANO: " + carroAtualizado.getAno()
-                        + " | RESULTADO: SUCESSO"
         );
 
         return carroAtualizado;
@@ -297,7 +307,8 @@ public class CarroService {
                     "VALIDACAO",
                     "CARRO",
                     null,
-                    "RESULTADO: MODELO VAZIO"
+                    "ERRO",
+                    "MODELO VAZIO"
             );
 
             throw new CarroException(
@@ -309,9 +320,10 @@ public class CarroService {
 
             logService.error(
                     "VALIDACAO",
-                    modelo,
+                    "CARRO",
                     null,
-                    "RESULTADO: MODELO INVALIDO | TAMANHO: " + modelo.length()
+                    "ERRO",
+                    "MODELO INVALIDO | TAMANHO: " + modelo.length()
             );
 
             throw new CarroException(
@@ -329,7 +341,8 @@ public class CarroService {
                     "VALIDACAO",
                     "CARRO",
                     null,
-                    "RESULTADO: PRECO INVALIDO | VALOR: " + preco
+                    "ERRO",
+                    "PRECO INVALIDO | VALOR: " + preco
             );
 
             throw new CarroException(
@@ -350,9 +363,10 @@ public class CarroService {
 
             logService.warn(
                     "CONSULTA",
-                    modelo,
+                    "CARRO",
                     null,
-                    "RESULTADO: CARRO NAO ENCONTRADO"
+                    "ERRO",
+                    "CARRO NAO ENCONTRADO | MODELO: " + modelo
             );
         }
 

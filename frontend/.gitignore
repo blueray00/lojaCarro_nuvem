@@ -12,6 +12,9 @@ dist
 dist-ssr
 *.local
 
+# Banco H2 local
+data/
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json

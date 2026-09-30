@@ -187,3 +187,25 @@ body {
   border-radius: 7px;
   color: #666;
 }
+
+.usuario-id {
+  font-size: 13px;
+  color: #777;
+  margin-bottom: 4px;
+}
+
+.usuario-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.usuario-nome {
+  font-size: 18px;
+  font-weight: bold;
+}
+
+.usuario-cargo {
+  font-size: 14px;
+  color: #666;
+}

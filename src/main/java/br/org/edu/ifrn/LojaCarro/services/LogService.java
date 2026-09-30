@@ -32,15 +32,19 @@ public class LogService {
             String acao,
             String afetado,
             Long id,
+            String resultado,
             String detalhes) {
 
         logger.info(
-                "QUEM FEZ: {} | ACAO: {} | AFETADO: {} | ID: {} | {}",
+                "QUEM FEZ: {} | ACAO: {} | AFETADO: {} | ID: {} | RESULTADO: {}{}",
                 getQuemFez(),
                 acao,
                 afetado,
                 id,
-                detalhes
+                resultado,
+                detalhes == null || detalhes.isEmpty()
+                        ? ""
+                        : " | " + detalhes
         );
     }
 
@@ -48,15 +52,19 @@ public class LogService {
             String acao,
             String afetado,
             Long id,
+            String resultado,
             String detalhes) {
 
         logger.warn(
-                "QUEM FEZ: {} | ACAO: {} | AFETADO: {} | ID: {} | {}",
+                "QUEM FEZ: {} | ACAO: {} | AFETADO: {} | ID: {} | RESULTADO: {}{}",
                 getQuemFez(),
                 acao,
                 afetado,
                 id,
-                detalhes
+                resultado,
+                detalhes == null || detalhes.isEmpty()
+                        ? ""
+                        : " | " + detalhes
         );
     }
 
@@ -64,15 +72,19 @@ public class LogService {
             String acao,
             String afetado,
             Long id,
+            String resultado,
             String detalhes) {
 
         logger.error(
-                "QUEM FEZ: {} | ACAO: {} | AFETADO: {} | ID: {} | {}",
+                "QUEM FEZ: {} | ACAO: {} | AFETADO: {} | ID: {} | RESULTADO: {}{}",
                 getQuemFez(),
                 acao,
                 afetado,
                 id,
-                detalhes
+                resultado,
+                detalhes == null || detalhes.isEmpty()
+                        ? ""
+                        : " | " + detalhes
         );
     }
 }

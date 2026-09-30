@@ -3,6 +3,7 @@ package br.org.edu.ifrn.LojaCarro.model;
 import jakarta.persistence.*;
 
 @Entity
+@Table(name = "usuarios")
 public class User {
 
     @Id

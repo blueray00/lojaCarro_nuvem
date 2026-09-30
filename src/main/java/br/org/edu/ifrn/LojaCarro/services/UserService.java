@@ -24,10 +24,11 @@ public class UserService {
 
         logService.info(
                 "CADASTRO",
-                usuarioCriado.getNome(),
+                "USUARIO",
                 usuarioCriado.getId(),
-                "CARGO: " + usuarioCriado.getCargo()
-                        + " | RESULTADO: SUCESSO"
+                "SUCESSO",
+                "NOME: " + usuarioCriado.getNome()
+                        + " | CARGO: " + usuarioCriado.getCargo()
         );
 
         return usuarioCriado;
@@ -41,8 +42,8 @@ public class UserService {
                 "LISTAGEM",
                 "USUARIOS",
                 null,
+                "SUCESSO",
                 "QUANTIDADE: " + usuarios.size()
-                        + " | RESULTADO: SUCESSO"
         );
 
         return usuarios;
@@ -58,7 +59,8 @@ public class UserService {
                     "CONSULTA",
                     "USUARIO",
                     id,
-                    "RESULTADO: USUARIO NAO ENCONTRADO"
+                    "ERRO",
+                    "USUARIO NAO ENCONTRADO"
             );
 
             return Optional.empty();
@@ -66,10 +68,11 @@ public class UserService {
 
         logService.info(
                 "CONSULTA",
-                usuario.get().getNome(),
+                "USUARIO",
                 usuario.get().getId(),
-                "CARGO: " + usuario.get().getCargo()
-                        + " | RESULTADO: SUCESSO"
+                "SUCESSO",
+                "NOME: " + usuario.get().getNome()
+                        + " | CARGO: " + usuario.get().getCargo()
         );
 
         return usuario;
@@ -83,9 +86,10 @@ public class UserService {
 
             logService.warn(
                     "ATUALIZACAO",
-                    user.getNome(),
+                    "USUARIO",
                     id,
-                    "RESULTADO: USUARIO NAO ENCONTRADO"
+                    "ERRO",
+                    "USUARIO NAO ENCONTRADO"
             );
 
             return null;
@@ -103,13 +107,13 @@ public class UserService {
 
         logService.info(
                 "ATUALIZACAO",
-                usuarioAtualizado.getNome(),
+                "USUARIO",
                 usuarioAtualizado.getId(),
+                "SUCESSO",
                 "NOME ANTERIOR: " + nomeAnterior
                         + " | NOME NOVO: " + usuarioAtualizado.getNome()
                         + " | CARGO ANTERIOR: " + cargoAnterior
                         + " | CARGO NOVO: " + usuarioAtualizado.getCargo()
-                        + " | RESULTADO: SUCESSO"
         );
 
         return usuarioAtualizado;
@@ -125,7 +129,8 @@ public class UserService {
                     "EXCLUSAO",
                     "USUARIO",
                     id,
-                    "RESULTADO: USUARIO NAO ENCONTRADO"
+                    "ERRO",
+                    "USUARIO NAO ENCONTRADO"
             );
 
             return false;
@@ -137,10 +142,11 @@ public class UserService {
 
         logService.info(
                 "EXCLUSAO",
-                usuario.getNome(),
+                "USUARIO",
                 usuario.getId(),
-                "CARGO: " + usuario.getCargo()
-                        + " | RESULTADO: SUCESSO"
+                "SUCESSO",
+                "NOME: " + usuario.getNome()
+                        + " | CARGO: " + usuario.getCargo()
         );
 
         return true;

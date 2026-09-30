@@ -4,10 +4,12 @@ import br.org.edu.ifrn.LojaCarro.model.User;
 import br.org.edu.ifrn.LojaCarro.services.UserService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.CrossOrigin;
 
 import java.net.URI;
 import java.util.List;
 
+@CrossOrigin(origins = "http://localhost:5173")
 @RestController
 @RequestMapping("/usuarios")
 public class UserController {
