@@ -20,158 +20,347 @@ public class CarroService {
     @Autowired
     public CarroRepository carroRepository;
 
+    @Autowired
+    private LogService logService;
+
     public Carro save(Carro c) {
-        logger.info("Salvando carro: {}", c.getModelo());
 
         validarModelo(c.getModelo());
         validarPreco(c.getPreco());
 
         Carro carroSalvo = carroRepository.save(c);
 
-        logger.info("Carro salvo com ID: {}", carroSalvo.getId());
+        logService.info(
+                "CADASTRO",
+                carroSalvo.getModelo(),
+                carroSalvo.getId(),
+                "ANO: " + carroSalvo.getAno()
+                        + " | PRECO: " + carroSalvo.getPreco()
+                        + " | RESULTADO: SUCESSO"
+        );
 
         return carroSalvo;
     }
 
     public void deleteById(Long id) {
-        logger.info("Excluindo carro com ID: {}", id);
 
         if (id <= 0) {
-            logger.error("Tentativa de exclusão com ID inválido: {}", id);
-            throw new CarroException("O ID do carro não pode ser negativo. ID fornecido: " + id);
-        }
 
-        carroRepository.deleteById(id);
+            logService.error(
+                    "EXCLUSAO",
+                    "CARRO",
+                    id,
+                    "RESULTADO: ID INVALIDO"
+            );
 
-        logger.info("Carro com ID {} excluído", id);
-    }
-
-    public Optional<Carro> findById(Long id) {
-        logger.info("Buscando carro com ID: {}", id);
-
-        if (id <= 0) {
-            logger.error("Tentativa de busca com ID inválido: {}", id);
-            throw new CarroException("O ID do carro não pode ser negativo. ID fornecido: " + id);
+            throw new CarroException(
+                    "O ID do carro não pode ser negativo. ID fornecido: " + id
+            );
         }
 
         Optional<Carro> carro = carroRepository.findById(id);
 
         if (carro.isEmpty()) {
-            logger.warn("Carro com ID {} não encontrado", id);
+
+            logService.warn(
+                    "EXCLUSAO",
+                    "CARRO",
+                    id,
+                    "RESULTADO: CARRO NAO ENCONTRADO"
+            );
+
+            carroRepository.deleteById(id);
+            return;
+        }
+
+        Carro carroExcluido = carro.get();
+
+        carroRepository.deleteById(id);
+
+        logService.info(
+                "EXCLUSAO",
+                carroExcluido.getModelo(),
+                carroExcluido.getId(),
+                "ANO: " + carroExcluido.getAno()
+                        + " | PRECO: " + carroExcluido.getPreco()
+                        + " | RESULTADO: SUCESSO"
+        );
+    }
+
+    public Optional<Carro> findById(Long id) {
+
+        if (id <= 0) {
+
+            logService.error(
+                    "CONSULTA",
+                    "CARRO",
+                    id,
+                    "RESULTADO: ID INVALIDO"
+            );
+
+            throw new CarroException(
+                    "O ID do carro não pode ser negativo. ID fornecido: " + id
+            );
+        }
+
+        Optional<Carro> carro = carroRepository.findById(id);
+
+        if (carro.isEmpty()) {
+
+            logService.warn(
+                    "CONSULTA",
+                    "CARRO",
+                    id,
+                    "RESULTADO: CARRO NAO ENCONTRADO"
+            );
+
+        } else {
+
+            logService.info(
+                    "CONSULTA",
+                    carro.get().getModelo(),
+                    carro.get().getId(),
+                    "ANO: " + carro.get().getAno()
+                            + " | PRECO: " + carro.get().getPreco()
+                            + " | RESULTADO: SUCESSO"
+            );
         }
 
         return carro;
     }
 
     public List<Carro> findAll() {
-        logger.info("Listando todos os carros");
 
-        return carroRepository.findAll();
+        List<Carro> carros = carroRepository.findAll();
+
+        logService.info(
+                "LISTAGEM",
+                "CARROS",
+                null,
+                "QUANTIDADE: " + carros.size()
+                        + " | RESULTADO: SUCESSO"
+        );
+
+        return carros;
     }
 
     public Optional<Carro> findByModelo(String modelo) {
-        logger.info("Buscando carro pelo modelo: {}", modelo);
 
         validarModelo(modelo);
 
         Optional<Carro> carro = carroRepository.findFirstByModelo(modelo);
 
         if (carro.isEmpty()) {
-            logger.warn("Carro com modelo {} não encontrado", modelo);
+
+            logService.warn(
+                    "CONSULTA",
+                    modelo,
+                    null,
+                    "RESULTADO: CARRO NAO ENCONTRADO"
+            );
+
+        } else {
+
+            logService.info(
+                    "CONSULTA",
+                    carro.get().getModelo(),
+                    carro.get().getId(),
+                    "ANO: " + carro.get().getAno()
+                            + " | PRECO: " + carro.get().getPreco()
+                            + " | RESULTADO: SUCESSO"
+            );
         }
 
         return carro;
     }
 
     public Carro saveFromLegacy(String modelo, double preco) {
-        logger.info("Salvando carro pelo método legado. Modelo: {}", modelo);
 
-        Carro carro = new Carro(modelo, LocalDate.now().getYear(), preco);
+        Carro carro = new Carro(
+                modelo,
+                LocalDate.now().getYear(),
+                preco
+        );
 
         return save(carro);
     }
 
     public Carro updateByModelo(String modelo, double preco) {
-        logger.info("Atualizando preço do carro com modelo: {}", modelo);
 
         Carro carro = localizarCarroPorModelo(modelo);
 
         validarPreco(preco);
 
+        double precoAnterior = carro.getPreco();
+
         carro.setPreco(preco);
 
         Carro carroAtualizado = carroRepository.save(carro);
 
-        logger.info("Preço do carro {} atualizado", modelo);
+        logService.info(
+                "ATUALIZACAO",
+                carroAtualizado.getModelo(),
+                carroAtualizado.getId(),
+                "PRECO ANTERIOR: " + precoAnterior
+                        + " | PRECO NOVO: " + carroAtualizado.getPreco()
+                        + " | ANO: " + carroAtualizado.getAno()
+                        + " | RESULTADO: SUCESSO"
+        );
 
         return carroAtualizado;
     }
 
     public Carro deleteByModelo(String modelo) {
-        logger.info("Excluindo carro pelo modelo: {}", modelo);
 
         Carro carro = localizarCarroPorModelo(modelo);
 
         carroRepository.delete(carro);
 
-        logger.info("Carro com modelo {} excluído", modelo);
+        logService.info(
+                "EXCLUSAO",
+                carro.getModelo(),
+                carro.getId(),
+                "ANO: " + carro.getAno()
+                        + " | PRECO: " + carro.getPreco()
+                        + " | RESULTADO: SUCESSO"
+        );
 
         return carro;
     }
 
     public Carro update(Carro c) {
-        logger.info("Atualizando carro com ID: {}", c.getId());
 
         if (c.getId() == null) {
-            logger.error("Tentativa de atualização sem ID");
-            throw new CarroException("O ID do carro para atualização não pode ser nulo.");
+
+            logService.error(
+                    "ATUALIZACAO",
+                    c.getModelo(),
+                    null,
+                    "RESULTADO: ID NAO INFORMADO"
+            );
+
+            throw new CarroException(
+                    "O ID do carro para atualização não pode ser nulo."
+            );
         }
 
         if (!carroRepository.existsById(c.getId())) {
-            logger.warn("Carro com ID {} não encontrado para atualização", c.getId());
-            throw new CarroException("Carro com ID " + c.getId() + " não encontrado para atualização.");
+
+            logService.warn(
+                    "ATUALIZACAO",
+                    c.getModelo(),
+                    c.getId(),
+                    "RESULTADO: CARRO NAO ENCONTRADO"
+            );
+
+            throw new CarroException(
+                    "Carro com ID " + c.getId()
+                            + " não encontrado para atualização."
+            );
         }
 
         validarModelo(c.getModelo());
         validarPreco(c.getPreco());
 
+        Optional<Carro> carroAnterior = carroRepository.findById(c.getId());
+
+        String modeloAnterior = carroAnterior
+                .map(Carro::getModelo)
+                .orElse("NAO INFORMADO");
+
+        Double precoAnterior = carroAnterior
+                .map(Carro::getPreco)
+                .orElse(null);
+
         Carro carroAtualizado = carroRepository.save(c);
 
-        logger.info("Carro com ID {} atualizado", c.getId());
+        logService.info(
+                "ATUALIZACAO",
+                carroAtualizado.getModelo(),
+                carroAtualizado.getId(),
+                "MODELO ANTERIOR: " + modeloAnterior
+                        + " | MODELO NOVO: " + carroAtualizado.getModelo()
+                        + " | PRECO ANTERIOR: " + precoAnterior
+                        + " | PRECO NOVO: " + carroAtualizado.getPreco()
+                        + " | ANO: " + carroAtualizado.getAno()
+                        + " | RESULTADO: SUCESSO"
+        );
 
         return carroAtualizado;
     }
 
     private void validarModelo(String modelo) {
+
         if (modelo == null || modelo.trim().isEmpty()) {
-            logger.error("Tentativa de salvar carro sem modelo");
-            throw new CarroException("O modelo do carro não pode estar vazio.");
+
+            logService.error(
+                    "VALIDACAO",
+                    "CARRO",
+                    null,
+                    "RESULTADO: MODELO VAZIO"
+            );
+
+            throw new CarroException(
+                    "O modelo do carro não pode estar vazio."
+            );
         }
 
         if (modelo.length() >= 5) {
-            logger.error("Modelo de carro inválido. Tamanho: {}", modelo.length());
-            throw new CarroException("O modelo do carro deve ter menos de 5 caracteres. Tamanho atual: " + modelo.length());
+
+            logService.error(
+                    "VALIDACAO",
+                    modelo,
+                    null,
+                    "RESULTADO: MODELO INVALIDO | TAMANHO: " + modelo.length()
+            );
+
+            throw new CarroException(
+                    "O modelo do carro deve ter menos de 5 caracteres. "
+                            + "Tamanho atual: " + modelo.length()
+            );
         }
     }
 
     private void validarPreco(double preco) {
+
         if (preco < 0) {
-            logger.error("Preço de carro inválido: {}", preco);
-            throw new CarroException("O preço do carro não pode ser negativo. Valor fornecido: " + preco);
+
+            logService.error(
+                    "VALIDACAO",
+                    "CARRO",
+                    null,
+                    "RESULTADO: PRECO INVALIDO | VALOR: " + preco
+            );
+
+            throw new CarroException(
+                    "O preço do carro não pode ser negativo. "
+                            + "Valor fornecido: " + preco
+            );
         }
     }
 
     private Carro localizarCarroPorModelo(String modelo) {
+
         validarModelo(modelo);
 
-        Optional<Carro> carro = carroRepository.findFirstByModelo(modelo);
+        Optional<Carro> carro =
+                carroRepository.findFirstByModelo(modelo);
 
         if (carro.isEmpty()) {
-            logger.warn("Carro com modelo {} não encontrado", modelo);
+
+            logService.warn(
+                    "CONSULTA",
+                    modelo,
+                    null,
+                    "RESULTADO: CARRO NAO ENCONTRADO"
+            );
         }
 
         return carro.orElseThrow(
-                () -> new CarroException("Carro com modelo " + modelo + " não encontrado.")
+                () -> new CarroException(
+                        "Carro com modelo " + modelo
+                                + " não encontrado."
+                )
         );
     }
 }

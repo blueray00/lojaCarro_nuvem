@@ -1,0 +1,189 @@
+#root {
+  width: 100%;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background-color: #f4f6f8;
+  color: #222;
+}
+
+.app {
+  width: 100%;
+  min-height: 100vh;
+}
+
+/* Cabeçalho */
+
+.cabecalho {
+  background-color: #1f2937;
+  color: white;
+  padding: 20px 40px;
+}
+
+.cabecalho h1 {
+  margin: 0;
+  font-size: 28px;
+}
+
+/* Menu */
+
+.menu {
+  background-color: white;
+  padding: 15px 40px;
+  border-bottom: 1px solid #ddd;
+}
+
+.menu button {
+  background-color: #2563eb;
+  color: white;
+  border: none;
+  padding: 10px 18px;
+  margin-right: 10px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 15px;
+}
+
+.menu button:hover {
+  background-color: #1d4ed8;
+}
+
+/* Conteúdo */
+
+.conteudo {
+  max-width: 1000px;
+  margin: 30px auto;
+  padding: 0 20px;
+}
+
+.conteudo h2 {
+  margin-top: 0;
+  font-size: 25px;
+}
+
+.conteudo h3 {
+  margin-top: 30px;
+}
+
+/* Formulário */
+
+.formulario {
+  background-color: white;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.formulario input {
+  padding: 11px;
+  margin-right: 10px;
+  margin-bottom: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 15px;
+}
+
+.formulario input:focus {
+  outline: none;
+  border-color: #2563eb;
+}
+
+/* Botões */
+
+.botao {
+  border: none;
+  padding: 10px 16px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 14px;
+  margin-right: 8px;
+}
+
+.botao-cadastrar {
+  background-color: #16a34a;
+  color: white;
+}
+
+.botao-cadastrar:hover {
+  background-color: #15803d;
+}
+
+.botao-editar {
+  background-color: #f59e0b;
+  color: white;
+}
+
+.botao-editar:hover {
+  background-color: #d97706;
+}
+
+.botao-excluir {
+  background-color: #dc2626;
+  color: white;
+}
+
+.botao-excluir:hover {
+  background-color: #b91c1c;
+}
+
+.botao-cancelar {
+  background-color: #6b7280;
+  color: white;
+}
+
+.botao-cancelar:hover {
+  background-color: #4b5563;
+}
+
+/* Lista de usuários */
+
+.lista-usuarios {
+  list-style: none;
+  padding: 0;
+}
+
+.usuario {
+  background-color: white;
+  margin-bottom: 10px;
+  padding: 15px;
+  border-radius: 7px;
+  border: 1px solid #ddd;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.usuario-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.usuario-nome {
+  font-weight: bold;
+  font-size: 16px;
+}
+
+.usuario-cargo {
+  color: #666;
+}
+
+.usuario-acoes {
+  display: flex;
+  gap: 8px;
+}
+
+/* Mensagens */
+
+.mensagem-vazia {
+  background-color: white;
+  padding: 20px;
+  border-radius: 7px;
+  color: #666;
+}

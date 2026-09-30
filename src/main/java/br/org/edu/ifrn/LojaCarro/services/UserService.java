@@ -2,8 +2,6 @@ package br.org.edu.ifrn.LojaCarro.services;
 
 import br.org.edu.ifrn.LojaCarro.model.User;
 import br.org.edu.ifrn.LojaCarro.repository.UserRepository;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -12,74 +10,138 @@ import java.util.Optional;
 @Service
 public class UserService {
 
-    private static final Logger logger = LoggerFactory.getLogger(UserService.class);
-
     private final UserRepository repository;
+    private final LogService logService;
 
-    public UserService(UserRepository repository) {
+    public UserService(UserRepository repository, LogService logService) {
         this.repository = repository;
+        this.logService = logService;
     }
 
     public User criar(User user) {
-        logger.info("Criando usuário: {}", user.getNome());
 
         User usuarioCriado = repository.save(user);
 
-        logger.info("Usuário criado com ID: {}", usuarioCriado.getId());
+        logService.info(
+                "CADASTRO",
+                usuarioCriado.getNome(),
+                usuarioCriado.getId(),
+                "CARGO: " + usuarioCriado.getCargo()
+                        + " | RESULTADO: SUCESSO"
+        );
 
         return usuarioCriado;
     }
 
     public List<User> listar() {
-        logger.info("Listando todos os usuários");
 
-        return repository.findAll();
+        List<User> usuarios = repository.findAll();
+
+        logService.info(
+                "LISTAGEM",
+                "USUARIOS",
+                null,
+                "QUANTIDADE: " + usuarios.size()
+                        + " | RESULTADO: SUCESSO"
+        );
+
+        return usuarios;
     }
 
     public Optional<User> buscarPorId(Long id) {
-        logger.info("Buscando usuário com ID: {}", id);
 
         Optional<User> usuario = repository.findById(id);
 
         if (usuario.isEmpty()) {
-            logger.warn("Usuário com ID {} não encontrado", id);
+
+            logService.warn(
+                    "CONSULTA",
+                    "USUARIO",
+                    id,
+                    "RESULTADO: USUARIO NAO ENCONTRADO"
+            );
+
+            return Optional.empty();
         }
+
+        logService.info(
+                "CONSULTA",
+                usuario.get().getNome(),
+                usuario.get().getId(),
+                "CARGO: " + usuario.get().getCargo()
+                        + " | RESULTADO: SUCESSO"
+        );
 
         return usuario;
     }
 
     public User atualizar(Long id, User user) {
-        logger.info("Atualizando usuário com ID: {}", id);
 
         Optional<User> usuarioExistente = repository.findById(id);
 
         if (usuarioExistente.isEmpty()) {
-            logger.warn("Não foi possível atualizar. Usuário com ID {} não encontrado", id);
+
+            logService.warn(
+                    "ATUALIZACAO",
+                    user.getNome(),
+                    id,
+                    "RESULTADO: USUARIO NAO ENCONTRADO"
+            );
+
             return null;
         }
 
         User usuario = usuarioExistente.get();
+
+        String nomeAnterior = usuario.getNome();
+        String cargoAnterior = usuario.getCargo();
+
         usuario.setNome(user.getNome());
         usuario.setCargo(user.getCargo());
 
         User usuarioAtualizado = repository.save(usuario);
 
-        logger.info("Usuário com ID {} atualizado", id);
+        logService.info(
+                "ATUALIZACAO",
+                usuarioAtualizado.getNome(),
+                usuarioAtualizado.getId(),
+                "NOME ANTERIOR: " + nomeAnterior
+                        + " | NOME NOVO: " + usuarioAtualizado.getNome()
+                        + " | CARGO ANTERIOR: " + cargoAnterior
+                        + " | CARGO NOVO: " + usuarioAtualizado.getCargo()
+                        + " | RESULTADO: SUCESSO"
+        );
 
         return usuarioAtualizado;
     }
 
     public boolean excluir(Long id) {
-        logger.info("Excluindo usuário com ID: {}", id);
 
-        if (!repository.existsById(id)) {
-            logger.warn("Não foi possível excluir. Usuário com ID {} não encontrado", id);
+        Optional<User> usuarioExistente = repository.findById(id);
+
+        if (usuarioExistente.isEmpty()) {
+
+            logService.warn(
+                    "EXCLUSAO",
+                    "USUARIO",
+                    id,
+                    "RESULTADO: USUARIO NAO ENCONTRADO"
+            );
+
             return false;
         }
 
+        User usuario = usuarioExistente.get();
+
         repository.deleteById(id);
 
-        logger.info("Usuário com ID {} excluído", id);
+        logService.info(
+                "EXCLUSAO",
+                usuario.getNome(),
+                usuario.getId(),
+                "CARGO: " + usuario.getCargo()
+                        + " | RESULTADO: SUCESSO"
+        );
 
         return true;
     }
