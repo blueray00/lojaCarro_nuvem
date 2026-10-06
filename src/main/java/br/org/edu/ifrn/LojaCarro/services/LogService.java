@@ -12,20 +12,43 @@ public class LogService {
             LoggerFactory.getLogger(LogService.class);
 
     private final HttpServletRequest request;
+    private final UsuarioApiService usuarioApiService;
 
-    public LogService(HttpServletRequest request) {
+    public LogService(
+            HttpServletRequest request,
+            UsuarioApiService usuarioApiService) {
+
         this.request = request;
+        this.usuarioApiService = usuarioApiService;
     }
 
     public String getQuemFez() {
 
-        String usuario = request.getHeader("X-Usuario-Nome");
+        String usuarioId = request.getHeader("X-Usuario-Id");
 
-        if (usuario == null || usuario.trim().isEmpty()) {
+        if (usuarioId == null || usuarioId.trim().isEmpty()) {
             return "USUARIO_NAO_IDENTIFICADO";
         }
 
-        return usuario;
+        try {
+            Long id = Long.parseLong(usuarioId);
+
+            return usuarioApiService.buscarNomePorId(id);
+
+        } catch (NumberFormatException e) {
+
+            return "USUARIO_ID_INVALIDO";
+
+        } catch (Exception e) {
+
+            logger.error(
+                    "Erro ao consultar usuário na LojaUsuario. ID: {}",
+                    usuarioId,
+                    e
+            );
+
+            return "USUARIO_NAO_IDENTIFICADO";
+        }
     }
 
     public void info(
