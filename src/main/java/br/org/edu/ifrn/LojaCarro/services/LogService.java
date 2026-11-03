@@ -1,5 +1,7 @@
+
 package br.org.edu.ifrn.LojaCarro.services;
 
+import br.org.edu.ifrn.LojaCarro.mensageria.CarroLogPublisher;
 import jakarta.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,43 +15,23 @@ public class LogService {
 
     private final HttpServletRequest request;
     private final UsuarioApiService usuarioApiService;
+    private final CarroLogPublisher carroLogPublisher;
 
     public LogService(
             HttpServletRequest request,
-            UsuarioApiService usuarioApiService) {
+            UsuarioApiService usuarioApiService,
+            CarroLogPublisher carroLogPublisher) {
 
         this.request = request;
         this.usuarioApiService = usuarioApiService;
+        this.carroLogPublisher = carroLogPublisher;
     }
+
 
     public String getQuemFez() {
-
-        String usuarioId = request.getHeader("X-Usuario-Id");
-
-        if (usuarioId == null || usuarioId.trim().isEmpty()) {
-            return "USUARIO_NAO_IDENTIFICADO";
-        }
-
-        try {
-            Long id = Long.parseLong(usuarioId);
-
-            return usuarioApiService.buscarNomePorId(id);
-
-        } catch (NumberFormatException e) {
-
-            return "USUARIO_ID_INVALIDO";
-
-        } catch (Exception e) {
-
-            logger.error(
-                    "Erro ao consultar usuário na LojaUsuario. ID: {}",
-                    usuarioId,
-                    e
-            );
-
-            return "USUARIO_NAO_IDENTIFICADO";
-        }
+        return "RAYNARA";
     }
+
 
     public void info(
             String acao,
@@ -58,9 +40,11 @@ public class LogService {
             String resultado,
             String detalhes) {
 
+        String quemFez = getQuemFez();
+
         logger.info(
                 "QUEM FEZ: {} | ACAO: {} | AFETADO: {} | ID: {} | RESULTADO: {}{}",
-                getQuemFez(),
+                quemFez,
                 acao,
                 afetado,
                 id,
@@ -68,6 +52,10 @@ public class LogService {
                 detalhes == null || detalhes.isEmpty()
                         ? ""
                         : " | " + detalhes
+        );
+
+        enviarLogRabbitMQ(
+                quemFez, acao, afetado, id, resultado, detalhes
         );
     }
 
@@ -78,9 +66,11 @@ public class LogService {
             String resultado,
             String detalhes) {
 
+        String quemFez = getQuemFez();
+
         logger.warn(
                 "QUEM FEZ: {} | ACAO: {} | AFETADO: {} | ID: {} | RESULTADO: {}{}",
-                getQuemFez(),
+                quemFez,
                 acao,
                 afetado,
                 id,
@@ -88,6 +78,10 @@ public class LogService {
                 detalhes == null || detalhes.isEmpty()
                         ? ""
                         : " | " + detalhes
+        );
+
+        enviarLogRabbitMQ(
+                quemFez, acao, afetado, id, resultado, detalhes
         );
     }
 
@@ -98,9 +92,11 @@ public class LogService {
             String resultado,
             String detalhes) {
 
+        String quemFez = getQuemFez();
+
         logger.error(
                 "QUEM FEZ: {} | ACAO: {} | AFETADO: {} | ID: {} | RESULTADO: {}{}",
-                getQuemFez(),
+                quemFez,
                 acao,
                 afetado,
                 id,
@@ -109,5 +105,37 @@ public class LogService {
                         ? ""
                         : " | " + detalhes
         );
+
+        enviarLogRabbitMQ(
+                quemFez, acao, afetado, id, resultado, detalhes
+        );
+    }
+
+    private void enviarLogRabbitMQ(
+            String quemFez,
+            String acao,
+            String afetado,
+            Long id,
+            String resultado,
+            String detalhes) {
+
+        try {
+            carroLogPublisher.enviarLog(
+                    quemFez,
+                    acao,
+                    afetado,
+                    id,
+                    resultado,
+                    detalhes
+            );
+
+        } catch (Exception e) {
+
+            logger.error(
+                    "Erro ao enviar log para o RabbitMQ. Ação: {}",
+                    acao,
+                    e
+            );
+        }
     }
 }
