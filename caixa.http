@@ -1,0 +1,7 @@
+### Abrir caixa
+POST http://localhost:8080/caixas/abrir
+Content-Type: application/json
+
+{
+  "saldoInicial": 1000
+}
