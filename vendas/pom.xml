@@ -14,4 +14,38 @@
 
     <artifactId>vendas</artifactId>
 
+    <dependencies>
+        <!-- API REST -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+
+        <!-- Persistência e entidades JPA -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-jpa</artifactId>
+        </dependency>
+
+        <!-- Mensageria RabbitMQ -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-amqp</artifactId>
+        </dependency>
+
+        <!-- Módulo Caixa -->
+        <dependency>
+            <groupId>br.org.edu.ifrn</groupId>
+            <artifactId>caixa</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <!-- Módulo Comissão -->
+        <dependency>
+            <groupId>br.org.edu.ifrn</groupId>
+            <artifactId>comissao</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+    </dependencies>
+
 </project>

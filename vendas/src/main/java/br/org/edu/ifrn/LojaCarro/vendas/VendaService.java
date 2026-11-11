@@ -75,6 +75,8 @@ public class VendaService {
 
         comissaoService.calcular(
                 salva.getId(),
+                salva.getVendedorId(),
+                salva.getValor(),
                 5.0
         );
 

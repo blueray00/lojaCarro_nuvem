@@ -1,4 +1,3 @@
-
 package br.org.edu.ifrn.LojaCarro.comissao;
 
 import org.springframework.http.HttpStatus;
@@ -23,12 +22,20 @@ public class ComissaoController {
             @RequestBody Map<String, Object> dados) {
 
         Long vendaId = Long.valueOf(dados.get("vendaId").toString());
+        Long vendedorId = Long.valueOf(dados.get("vendedorId").toString());
+
+        double valor = Double.parseDouble(
+                dados.get("valor").toString()
+        );
+
         double percentual = Double.parseDouble(
                 dados.get("percentual").toString()
         );
 
         return ResponseEntity.status(HttpStatus.CREATED)
-                .body(comissaoService.calcular(vendaId, percentual));
+                .body(comissaoService.calcular(
+                        vendaId, vendedorId, valor, percentual
+                ));
     }
 
     @GetMapping

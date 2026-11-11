@@ -1,7 +1,6 @@
 package br.org.edu.ifrn.LojaCarro.vendas;
 
 import br.org.edu.ifrn.LojaCarro.model.Venda;
-import br.org.edu.ifrn.LojaCarro.vendas.VendaService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

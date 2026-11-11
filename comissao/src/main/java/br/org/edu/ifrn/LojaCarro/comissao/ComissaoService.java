@@ -1,8 +1,6 @@
 
 package br.org.edu.ifrn.LojaCarro.comissao;
 
-import br.org.edu.ifrn.LojaCarro.model.Venda;
-import br.org.edu.ifrn.LojaCarro.vendas.VendaRepository;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -12,19 +10,28 @@ import java.util.List;
 public class ComissaoService {
 
     private final ComissaoRepository comissaoRepository;
-    private final VendaRepository vendaRepository;
     private final ComissaoLogPublisher logPublisher;
 
     public ComissaoService(
             ComissaoRepository comissaoRepository,
-            VendaRepository vendaRepository,
             ComissaoLogPublisher logPublisher) {
         this.comissaoRepository = comissaoRepository;
-        this.vendaRepository = vendaRepository;
         this.logPublisher = logPublisher;
     }
 
-    public Comissao calcular(Long vendaId, double percentual) {
+    public Comissao calcular(
+            Long vendaId,
+            Long vendedorId,
+            double valorVenda,
+            double percentual) {
+
+        if (vendaId == null || vendaId <= 0
+                || vendedorId == null || vendedorId <= 0
+                || valorVenda <= 0) {
+            throw new IllegalArgumentException(
+                    "Dados da venda inválidos."
+            );
+        }
 
         if (percentual <= 0 || percentual > 100) {
             throw new IllegalArgumentException(
@@ -32,12 +39,7 @@ public class ComissaoService {
             );
         }
 
-        Venda venda = vendaRepository.findById(vendaId)
-                .orElseThrow(() -> new RuntimeException(
-                        "Venda não encontrada: " + vendaId
-                ));
-
-        if (comissaoRepository.findByVendaId(vendaId).size() > 0) {
+        if (!comissaoRepository.findByVendaId(vendaId).isEmpty()) {
             throw new IllegalArgumentException(
                     "Já existe comissão cadastrada para essa venda."
             );
@@ -46,9 +48,9 @@ public class ComissaoService {
         Comissao comissao = new Comissao();
 
         comissao.setVendaId(vendaId);
-        comissao.setVendedorId(venda.getVendedorId());
+        comissao.setVendedorId(vendedorId);
         comissao.setPercentual(percentual);
-        comissao.setValor(venda.getValor() * percentual / 100);
+        comissao.setValor(valorVenda * percentual / 100);
         comissao.setDataCalculo(LocalDateTime.now());
 
         Comissao salva = comissaoRepository.save(comissao);

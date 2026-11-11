@@ -1,3 +1,4 @@
+
 package br.org.edu.ifrn.LojaCarro.services;
 
 import org.springframework.stereotype.Service;
@@ -15,6 +16,18 @@ public class UsuarioApiService {
     }
 
     public String buscarNomePorId(Long usuarioId) {
+        UsuarioResponse usuario = buscarUsuarioPorId(usuarioId);
+        return usuario.getNome();
+    }
+
+    public boolean usuarioEhGerente(Long usuarioId) {
+        UsuarioResponse usuario = buscarUsuarioPorId(usuarioId);
+
+        return usuario.getCargo() != null
+                && "gerente".equalsIgnoreCase(usuario.getCargo().trim());
+    }
+
+    private UsuarioResponse buscarUsuarioPorId(Long usuarioId) {
 
         UsuarioResponse usuario = restClient.get()
                 .uri("/usuarios/{id}", usuarioId)
@@ -25,7 +38,7 @@ public class UsuarioApiService {
             throw new RuntimeException("Usuário não encontrado.");
         }
 
-        return usuario.getNome();
+        return usuario;
     }
 
     private static class UsuarioResponse {

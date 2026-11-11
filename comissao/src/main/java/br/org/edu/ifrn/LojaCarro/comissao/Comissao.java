@@ -1,4 +1,3 @@
-
 package br.org.edu.ifrn.LojaCarro.comissao;
 
 import jakarta.persistence.*;
